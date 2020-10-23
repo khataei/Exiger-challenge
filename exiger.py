@@ -163,6 +163,7 @@ class CovidFetcher():
 if __name__ == "__main__":
 
     config_file_name = sys.argv[1] if len(sys.argv) > 1 else None
+    output_file_name = sys.argv[2] if len(sys.argv) > 2 else None
 
     fr = FileReader(config_file_name)
     iso_date_df = fr.read_iso_date()
@@ -172,4 +173,4 @@ if __name__ == "__main__":
         cleaned_iso_date_df = fr.clean_iso_date()
         cov = CovidFetcher()
         cov.create_covid_table(cleaned_iso_date_df)
-        cov.write_table()
+        cov.write_table(output_file_name)
