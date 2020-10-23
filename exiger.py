@@ -10,9 +10,7 @@ import pandas as pd
 import requests
 
 
-logger = logging.getLogger(__name__)  # fix me
-
-
+logger = logging.getLogger(__name__) 
 class FileReader():
 
     def __init__(self, config_file_path=None):
@@ -30,12 +28,18 @@ class FileReader():
             self.config_file_path = config_file_path
 
     def __set_config_file_to_default(self):
-        """ Sets config file path to the default value"""
+        """ 
+        Sets config file path to the default value
+        """
+
         self.config_file_path = os.path.join(
             self.main_path, self.DEFAULT_CONFIG_FILE_NAME)
 
     def __set_excel_file_path(self):
-        """ Exctracts and set the excel file path from the config file"""
+        """
+         Exctracts and set the excel file path from the config file.
+        """
+
         try:
             self.config.read(self.config_file_path)
             self.excel_file_path = self.config['path'].get('excel_path')
@@ -52,7 +56,6 @@ class FileReader():
         Extracts and returns the iso and date columns from the passed excel_file_path
         By default read the file indicated in the config file 
         """
-
 
         self.__set_excel_file_path()
         try:
@@ -71,7 +74,7 @@ class FileReader():
 
     def clean_iso_date(self):
         """
-        Filters out invalid iso codes and unifies date times
+        Filters out invalid iso codes. Also unifies date times formats and igonre invalid dates
         """
 
         valid_iso = self.config['valid_iso_codes'].get('iso_list')
@@ -144,8 +147,8 @@ class CovidFetcher():
     def write_table(self, file_name=None):
         """
         Stores the fetch data on disk
-
         """
+
         if not file_name:
             self.file_name = dt.datetime.now().strftime("%Y%m%d-%H%M%S") + '.xlsx'
         else:
