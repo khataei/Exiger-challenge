@@ -20,7 +20,7 @@ Open a terminal and type `python3 exiger.py <path-to-config-file>  <output-file-
 
 
 # How to run the tests
-There are four tests written for this function that use the default excel and config files included in this repository. To run the test, open a terminal, navigate to the project folder and run `python3 test_exiger.py`. Alternatively, you can install the `nose` module and then run `nosetests` command.
+There are five tests written for this function that use the default excel and config files included in this repository. To run the test, open a terminal, navigate to the project folder and run `python3 test_exiger.py`. Alternatively, you can install the `nose` module and then run `nosetests` command.
 
 # Script structure:
 
@@ -31,6 +31,8 @@ The **FileReader** class is responsible for handling the following:
 - Setting up the config and excel file paths.
 - Reading the iso codes and the dates from the excel file. Note that it can handle multiple sheets in the excel file and different DateTime formats.
 - Cleaning data with two main goals: Removing invalid dates and removing invalid iso codes.
+- Dropping duplicte iso codes and dates 
+- Making a combination dataset from uniques iso codes and dates
 
 
 The **CovidFetcher** class does the following tasks:
