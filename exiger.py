@@ -1,16 +1,16 @@
 import os
 import sys
-import warnings
 import configparser
 import datetime as dt
-import json
 import logging
 import re
 import pandas as pd
 import requests
 
 
-logger = logging.getLogger(__name__) 
+logger = logging.getLogger(__name__)
+
+
 class FileReader():
 
     def __init__(self, config_file_path=None):
@@ -45,7 +45,7 @@ class FileReader():
             self.excel_file_path = self.config['path'].get('excel_path')
         except Exception as e:
             logger.warning(
-                "Cannot use the provided config file. make sure the path is correct " + str(e))
+                f"Cannot use the provided config file. make sure the path is correct, {str(e)}")
             self.__set_config_file_to_default()
         finally:
             self.config.read(self.config_file_path)
@@ -75,6 +75,7 @@ class FileReader():
     def clean_iso_date(self):
         """
         Filters out invalid iso codes. Also unifies date times formats and igonre invalid dates
+        Drops duplicates as we work with iso date combinations
         """
 
         valid_iso = self.config['valid_iso_codes'].get('iso_list')
@@ -90,8 +91,16 @@ class FileReader():
         self.iso_date_df['date'] = self.iso_date_df['date'].dt.strftime(
             '%Y-%m-%d')
         self.iso_date_df.reset_index(inplace=True, drop=True)
+        self.iso_date_df.iso.drop_duplicates(inplace=True)
+        self.iso_date_df.date.drop_duplicates(inplace=True)
 
         return self.iso_date_df
+
+    def make_combinations(self):
+        """ Receive a iso and date data frames and return a list of all combinations"""
+        combination_list = [(iso, date) for iso in self.iso_date_df['iso']
+                            for date in self.iso_date_df['date']]
+        return pd.DataFrame(combination_list, columns=['iso', 'date'])
 
 
 class CovidFetcher():
@@ -173,6 +182,7 @@ if __name__ == "__main__":
         print('The dataframe returned from the excel file is empty. Check the log for more info.')
     else:
         cleaned_iso_date_df = fr.clean_iso_date()
+        req_df = fr.make_combinations()
         cov = CovidFetcher()
-        cov.create_covid_table(cleaned_iso_date_df)
+        df = cov.create_covid_table(req_df)
         cov.write_table(output_file_name)
