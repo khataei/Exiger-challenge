@@ -23,7 +23,9 @@ class TestCovidFetcher(unittest.TestCase):
         fr = exiger.FileReader()
         fr.read_iso_date()
         df = fr.clean_iso_date()
+        df = fr.make_combinations()
         cf = exiger.CovidFetcher()
+
         result_df = cf.create_covid_table(df)
         self.assertEqual(result_df.loc[0, 'deaths'], 222176.0)
 
